@@ -18,6 +18,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -27,39 +30,46 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = __importStar(require("discord.js"));
-const fs_1 = __importDefault(require("fs"));
+const helpers_1 = require("./helpers");
+const commandInfo = require('../local/commandInfo');
 ;
 const { discordClient: client, commands } = {
     discordClient: new discord_js_1.Client(),
     commands: new discord_js_1.default.Collection()
 };
-const commandFiles = fs_1.default.readdirSync('./dist/commands').filter(file => file.endsWith('.js'));
-for (const file of commandFiles) {
-    const { aliases, execute, isActive } = require(`./commands/${file}`);
-    const command = {
-        execute,
-        isActive
-    };
-    for (const alias of aliases)
-        commands.set(alias, command);
+function assembleCommands() {
+    return __awaiter(this, void 0, void 0, function* () {
+        let commandList = yield helpers_1.retrieve('./dist/commands', [], '.c.js', true);
+        for (const command of commandList) {
+            const cmd = command;
+            const name = cmd.name;
+            console.log(name);
+            commands.set(name, cmd);
+        }
+    });
 }
+assembleCommands();
 const { PREFIX = '', BOT_TOKEN = '' } = process.env;
 client.login(BOT_TOKEN);
 client.once('ready', () => {
     console.log('Envivor online!');
+    helpers_1.setPresence(client, [
+        `${PREFIX}`,
+        'LISTENING'
+    ]);
 });
 client.on('message', (message) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    if (!message.content.startsWith(PREFIX) || message.author.bot)
-        return;
-    const args = message.content.slice(PREFIX.length).trim().split(' ');
+    if (!message.content.startsWith(PREFIX)) {
+        return message.author.bot || helpers_1.checkTrigger(message);
+    }
+    const args = message.content.slice(PREFIX.length).split(' ');
     const command = ((_a = args.shift()) === null || _a === void 0 ? void 0 : _a.toLowerCase()) || '';
-    const request = commands.get(command);
-    if (request)
+    const request = commands.get(command) || commands.get(commandInfo[command]);
+    if (request && request.isActive)
         request.execute(message, args);
 }));
+__exportStar(require("./helpers"), exports);
+//# sourceMappingURL=index.js.map

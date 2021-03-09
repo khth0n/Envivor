@@ -1,16 +1,19 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const MusicPlayer_1 = __importDefault(require("../music/MusicPlayer"));
-const { exe: execute } = {
-    exe(msg, args) {
-        MusicPlayer_1.default(msg, args);
+const { execute } = {
+    execute(msg, args) {
+        console.log('ping');
     }
 };
+var test;
+(function (test) {
+    test["NO"] = "music";
+    test["YES"] = "music";
+})(test || (test = {}));
+let test2 = test['NO'];
 module.exports = {
     aliases: ['music', 'm'],
     execute,
     isActive: true
 };
+//# sourceMappingURL=music.js.map

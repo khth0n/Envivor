@@ -1,0 +1,1 @@
+{"version":3,"file":"Ballot.js","sourceRoot":"","sources":["../../../src/commands/voting/Ballot.ts"],"names":[],"mappings":";;AAAA,2CAA0C;AAE1C;;;GAGG;AACH,MAAM,MAAM;IAIR;;;;OAIG;IACH,YAAY,KAAa,EAAE,KAAa;QACpC,IAAI,CAAC,KAAK,GAAG,IAAI,yBAAY,CAAC;YAC1B,KAAK,EAAE,KAAK;YACZ,KAAK,EAAE,KAAK;SACf,CAAC,CAAC;IACP,CAAC;CAGJ"}

@@ -1,5 +1,5 @@
 interface CommandHandler {
-    exe(data: any, args: string[]): any;
+    execute(data: any, args: string[]): any;
     isActive?: boolean;
 }
 

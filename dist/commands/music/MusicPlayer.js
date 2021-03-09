@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const chatCleaner_1 = __importDefault(require("../chatCleaner"));
+const chatCleaner_1 = __importDefault(require("../../chatCleaner"));
 const ytdl_core_1 = __importDefault(require("ytdl-core"));
 class MusicPlayer {
     constructor() {
@@ -111,8 +111,8 @@ class MusicPlayer {
     }
 }
 const jukebox = new MusicPlayer();
-const { exe: execute } = {
-    exe(msg, args) {
+const { execute } = {
+    execute(msg, args) {
         const item = args[0];
         switch (item) {
             case 'skip':
@@ -128,3 +128,4 @@ const { exe: execute } = {
     }
 };
 exports.default = execute;
+//# sourceMappingURL=MusicPlayer.js.map

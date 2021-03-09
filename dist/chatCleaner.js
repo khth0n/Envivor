@@ -13,9 +13,10 @@ function clean(msg, text) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!text)
             return yield msg.delete({ timeout: 4000 });
-        const message = yield msg.reply(text);
-        message.delete({ timeout: 4000 });
-        msg.delete({ timeout: 4000 });
+        const message = yield msg.channel.send(text);
+        message.delete({ timeout: 4000 }).catch(err => { console.log(err); });
+        msg.delete({ timeout: 4000 }).catch(err => { console.log(err); });
     });
 }
 exports.default = clean;
+//# sourceMappingURL=chatCleaner.js.map

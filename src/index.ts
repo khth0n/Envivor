@@ -1,10 +1,8 @@
 import Discord, { Client, Collection, MessageEmbed } from 'discord.js';
-import fs from 'fs';
 
-interface Command {
-    execute(message: Discord.Message, args: string[]): any;
-    isActive?: boolean;
-}
+import { Command, checkTrigger, retrieve, setPresence } from './helpers';
+
+const commandInfo = require('../local/commandInfo');
 
 interface EnvivorClient {
     discordClient: Client;
@@ -16,18 +14,20 @@ const { discordClient: client, commands}: EnvivorClient = {
     commands: new Discord.Collection()
 };
 
-const commandFiles = fs.readdirSync('./dist/commands').filter(file => file.endsWith('.js'));
+async function assembleCommands(){
+    let commandList = await retrieve('./dist/commands', [], '.c.js', true);
 
+    for(const command of commandList){
 
-for(const file of commandFiles){
-    const { aliases, execute, isActive } = require(`./commands/${file}`);
-    const command: Command = {
-        execute,
-        isActive
+        const cmd: Command = command;
+        const name = cmd.name;
+
+        console.log(name);
+        commands.set(name, cmd);
     }
-
-    for(const alias of aliases) commands.set(alias, command);
 }
+
+assembleCommands();
 
 const { PREFIX = '', BOT_TOKEN = ''} = process.env;
 
@@ -36,14 +36,25 @@ client.login(BOT_TOKEN);
 
 client.once('ready', () => {
     console.log('Envivor online!');
+
+    setPresence(client, [
+        `${PREFIX}`,
+        'LISTENING'
+    ]);
 });
 
 client.on('message', async message => {
-    if(!message.content.startsWith(PREFIX) || message.author.bot) return;
 
-    const args = message.content.slice(PREFIX.length).trim().split(' ');
+    if(!message.content.startsWith(PREFIX)){
+        return message.author.bot || checkTrigger(message);
+    }
+
+    const args = message.content.slice(PREFIX.length).split(' ');
     const command = args.shift()?.toLowerCase() || '';
 
-    const request = commands.get(command);
-    if(request) request.execute(message, args);
+    const request = commands.get(command) || commands.get(commandInfo[command]);
+
+    if(request && request.isActive) request.execute(message, args);
 });
+
+export * from './helpers';
